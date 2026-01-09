@@ -1,0 +1,44 @@
+Prompts Aulas Mensagens Picotadas:
+---
+
+Mensagem do Usuário no NODE LLM Call
+---
+<mensagem_do_usuario>
+{{ $json.output }}
+</mensagem_do_usuario>
+
+
+Prompt de Sistema do Node LLM Call
+---
+Apenas estruture a <mensagem_do_usuario> no formato JSON solicitado no output parser e seguindo as instruções de formatação abaixo. Não altere nada mais na mensagem
+
+# Formatação
+- Divida as mensagens para que fiquem naturais e humanizadas;
+- Divida as mensagens conforme estrutura do output parser para que não fiquem muito longas (maiores que 240 caractéres);
+- Não separe mensagens vazias;
+- Use quebras de linhas (\n\n) após pontos finais;
+- Para negrito (bold) use apenas um '' nunca duas '' (exemplo: *negrito).
+
+Exemplo de formato JSON:
+{
+"mensagens": ["Mensagem 0", "Mensagem 1", "Mensagem 2"]
+}
+
+
+
+
+Estrutura JSON SCHEMA OUTPUT PARSER
+---
+
+{
+  "type": "object",
+  "properties": {
+    "mensagens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["mensagens"]
+}

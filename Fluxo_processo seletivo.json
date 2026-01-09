@@ -1,0 +1,451 @@
+{
+  "name": "Fluxo_processo seletivo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2304,
+        144
+      ],
+      "id": "6839057d-8238-44c0-b4c6-dc2521130833",
+      "name": "Aguardar 5s",
+      "webhookId": "c63b59d5-125e-4163-b9a4-140169ffb328"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uWv9gZcEDjNVj-g2cOf90SH-2XPpr3AXwwDhiOh1FQw",
+          "mode": "list",
+          "cachedResultName": "Processo Seletivo_n8n_automaqção",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uWv9gZcEDjNVj-g2cOf90SH-2XPpr3AXwwDhiOh1FQw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Candidatos Fase 01 ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uWv9gZcEDjNVj-g2cOf90SH-2XPpr3AXwwDhiOh1FQw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        336
+      ],
+      "id": "2993fe63-2fbb-4a0a-bad6-325732342dc7",
+      "name": "Planilha de candidatos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2fFn7UnrWtfuwdKq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtDayOfMonth": 25,
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        336
+      ],
+      "id": "b5eb2e9a-39bb-4ab6-a82c-5c47fa2542f2",
+      "name": "Dispara disparo de pré seleção"
+    },
+    {
+      "parameters": {
+        "content": "# Filtro\n### Filtragem de candidatos préo aprovados com mais de 5 anos de experiência o e Superior completo**",
+        "height": 304,
+        "width": 704,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "699331fc-6f85-4e20-bc5c-40228a9f388d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "fromEmail": "co@emd.art.br",
+        "toEmail": "={{ $json['E-mail'] }}",
+        "subject": "​🎉​​🎉​ PARABÉNS, VOCÊ ACABA DE SER APROVADO!! ",
+        "emailFormat": "text",
+        "text": "Olá,\n\nParabéns pelo seu esforço em se candidatar para a vaga de desenvolvedor em automação de agentes de IA com n8n. Você acaba de ser APROVADO para a próxima etapa do processo seletivo. \n\n\nEm breve enviaremos novas orientações sobre a próxima etapa. \n\nPARABÉNS!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1952,
+        80
+      ],
+      "id": "2527230a-0924-4e61-8140-5807bd43420c",
+      "name": "Dispara e-mails para candidatos aprovados",
+      "webhookId": "81b4fbe1-bfd5-4194-83ad-8f72f0bbb3e3",
+      "credentials": {
+        "smtp": {
+          "id": "QkEy7ftcxAMFvJ0D",
+          "name": "SMTP [co@emd.art.br]"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2288,
+        544
+      ],
+      "id": "c4ba6a96-2675-477a-a8af-eb7b100006f3",
+      "name": "Aguardar 5s1",
+      "webhookId": "c63b59d5-125e-4163-b9a4-140169ffb328"
+    },
+    {
+      "parameters": {
+        "fromEmail": "co@emd.art.br",
+        "toEmail": "at@emd.art.br",
+        "subject": "Candidatos Aprovados e Reprovados",
+        "html": "=Olá colaborador X! Segue a relação dos candidatos aprovados e reprovados no ultimo processo seletivo.\n\nCandidatos Aprovados:\n{{ $json.candidatos_aprovados }}\n\nCandidatos Reprovados:\n{{ $json.candidatos_reprovados }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1136,
+        752
+      ],
+      "id": "2417f05d-4c67-439d-bfb9-b6156cfe1758",
+      "name": "Send email",
+      "webhookId": "fcebe499-bd0a-4cda-90e1-71d0311120ea",
+      "credentials": {
+        "smtp": {
+          "id": "QkEy7ftcxAMFvJ0D",
+          "name": "SMTP [co@emd.art.br]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1616,
+        544
+      ],
+      "id": "c98c3ae4-ada1-4f5e-9173-5387b8373a26",
+      "name": "Fila Candidato Reprovado"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1632,
+        144
+      ],
+      "id": "6d79b13f-4b24-425e-af05-8457cd56e57c",
+      "name": "Fila de candidatos Aprovados"
+    },
+    {
+      "parameters": {
+        "fromEmail": "co@emd.art.br",
+        "toEmail": "={{ $json['E-mail'] }}",
+        "subject": "​🎉​​🎉​ RETORNO | PROCESSO SELETIVO",
+        "emailFormat": "text",
+        "text": "=Olá, {{ $json.Nome }}\n\nAgradecemos pelo seu esforço em participar do processo seletivo apra a vaga de agente de IA. Sabemos como é desgastante todo esse procedimento e tamanha expectativa em realizar o snho de conquistar uma nova posiçlão aqui na Mezzanyne. Tambpém nos desdicamos muito em cuidadosamente escolher os maiores talentos e sabemos o quanto também essa tomada de decisão é difícil. Com iisso, como parte do nosso comprometimento em uma devolutiva mais humanizada possível, informamos que infelizmente tivemos que optar por outro candidato que está mais alinhado com nossos requisitos. \n\nNão desanime, seu currículo e portfólio é muito rico e acreditamos que, numa próxima oportunidade você estará mais preparado para preencher essa posição.\n\nAtenciosamente, \n\nMezzanyne ",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1936,
+        480
+      ],
+      "id": "a691e91a-765b-4a8b-86c4-acb6156b4fb5",
+      "name": "Dispara e-mails para candidatos reprovados",
+      "webhookId": "81b4fbe1-bfd5-4194-83ad-8f72f0bbb3e3",
+      "credentials": {
+        "smtp": {
+          "id": "QkEy7ftcxAMFvJ0D",
+          "name": "SMTP [co@emd.art.br]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const aprovados = [];\nconst reprovados = [];\n\nfor (const item of items) {\n    const dados = item.json;\n\n    const experiencia = parseInt(dados['Anos de Experiência']);\n    const escolaridade = dados['Grau de Escolaridade'];\n\n    const aprovado = (experiencia > 5 && escolaridade === \"Superior\");\n    \n    const linhaTexto = \n        `Nome: ${dados.Nome} | ` +\n        `E-mail: ${dados['E-mail']} | ` +\n        `Experiência: ${dados['Anos de Experiência']} anos | ` +\n        `Escolaridade: ${dados['Grau de Escolaridade']}`;\n        \n    if (aprovado) {\n        aprovados.push(linhaTexto);\n    } else {\n        reprovados.push(linhaTexto);\n    }\n}\n\nconst aprovadosString = aprovados.join('\\n');\nconst reprovadosString = reprovados.join('\\n');\n\nreturn [\n    {\n        json: {\n            candidatos_aprovados: aprovadosString,\n            candidatos_reprovados: reprovadosString,\n        },\n    },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        752
+      ],
+      "id": "8e1673b7-b5ba-4974-ada8-f6e8bcd14143",
+      "name": "Lógica IF  | Envido de  reprovados p/ RH",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n## Candidatos Aprovados\n",
+        "height": 336,
+        "width": 976,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1520,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "2b2af935-89e1-405c-bc67-695e6a872800",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n## Candidatos Reprovados\n",
+        "height": 336,
+        "width": 976,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1520,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "cc4a2200-f464-471d-afe0-731bab2f5ce4",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "\n\n## Envio  de relação de reprovados para RH\n",
+        "height": 336,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        848,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "72ad01bf-3746-4923-aee4-74b7273d106f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f9b52c7-4ba3-4ecb-9518-37e307cb24cb",
+              "leftValue": "={{ $json[' Anos de Experiência '] }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "ef6d7045-9d48-432b-be8a-2dedacbecc82",
+              "leftValue": "={{ $json['Grau de Escolaridade '] }}",
+              "rightValue": "Superior",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        336
+      ],
+      "id": "fd16ce12-b29f-4a6e-8792-219c52290aa8",
+      "name": "Pré Seleção"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Aguardar 5s": {
+      "main": [
+        [
+          {
+            "node": "Fila de candidatos Aprovados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planilha de candidatos": {
+      "main": [
+        [
+          {
+            "node": "Lógica IF  | Envido de  reprovados p/ RH",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pré Seleção",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dispara disparo de pré seleção": {
+      "main": [
+        [
+          {
+            "node": "Planilha de candidatos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dispara e-mails para candidatos aprovados": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 5s1": {
+      "main": [
+        [
+          {
+            "node": "Fila Candidato Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila Candidato Reprovado": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Dispara e-mails para candidatos reprovados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila de candidatos Aprovados": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Dispara e-mails para candidatos aprovados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dispara e-mails para candidatos reprovados": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 5s1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lógica IF  | Envido de  reprovados p/ RH": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pré Seleção": {
+      "main": [
+        [
+          {
+            "node": "Fila de candidatos Aprovados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fila Candidato Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b631b8d-50d9-4114-9072-078880696d25",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "632c5d40e8f9418390e5f65f6782e2272939f87710b4855edb171147010e0a4d"
+  },
+  "id": "KH28Hxb9o5uU4yPQ",
+  "tags": []
+}

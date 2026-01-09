@@ -1,0 +1,15 @@
+Prompts Aulas Erros:
+---
+
+Instruções para o Buffer
+---
+<ErroFormatoMensagem>
+
+
+
+
+Prompt para o Agente
+---
+  <ErroFormatoMensagem>
+O usuário enviou um formato de mensagem que não podemos processar. 
+Caso seja a única mensagem enviada, diga ao usuário que não entende esse tipo de mensagem.

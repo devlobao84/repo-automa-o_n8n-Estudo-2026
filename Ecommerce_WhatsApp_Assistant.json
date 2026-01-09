@@ -1,0 +1,92 @@
+
+{
+  "name": "Ecommerce WhatsApp Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "none",
+        "requestMethod": "GET",
+        "url": "https://your-ecommerce.com/api/checkout/abandoned"
+      },
+      "id": "1",
+      "name": "Check Abandoned Checkout",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [200, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "const product = items[0].json.product;\n\n// exemplo de catálogo fictício\nconst catalog = [\n  { name: 'Perfume Oud Classic', category: 'arabic', link: 'https://yourshop.com/oud-classic' },\n  { name: 'Essência Sândalo Real', category: 'arabic', link: 'https://yourshop.com/sandalo-real' },\n  { name: 'Fragrância Ambar do Deserto', category: 'arabic', link: 'https://yourshop.com/ambar-deserto' }\n];\n\nconst recommendations = catalog.filter(p => p.category === 'arabic' && p.name !== product);\n\nreturn [{ json: { product, recommendations, clientPhone: \"+5511999999999\" } }];"
+      },
+      "id": "2",
+      "name": "Simulate Catalog",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [400, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-3.5-turbo",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Você é um agente de atendimento experiente, educado, direto ao ponto. Ajude o cliente a encontrar a melhor opção com base em alternativas."
+          },
+          {
+            "role": "user",
+            "content": "Cliente estava prestes a comprar: {{$json[\"product\"]}}. Sugira 3 produtos similares com links:\n{{ $json[\"recommendations\"].map(r => `• ${r.name} - ${r.link}`).join(\"\\n\") }}"
+          }
+        ]
+      },
+      "id": "3",
+      "name": "IA GPT Sugestões",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [600, 200],
+      "credentials": {
+        "openAIApi": {
+          "id": "your-openai-credential-id"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "url": "https://graph.facebook.com/v13.0/your-whatsapp-api/messages",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{ \"messaging_product\": \"whatsapp\", \"to\": \"{{ $json[\\\"clientPhone\\\"] }}\", \"type\": \"text\", \"text\": { \"preview_url\": false, \"body\": \"{{ $json[\\\"message\\\"] }}\" } }"
+      },
+      "id": "4",
+      "name": "Enviar via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [800, 200],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "your-whatsapp-api-credential-id"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Check Abandoned Checkout": {
+      "main": [
+        ["2"]
+      ]
+    },
+    "Simulate Catalog": {
+      "main": [
+        ["3"]
+      ]
+    },
+    "IA GPT Sugestões": {
+      "main": [
+        ["4"]
+      ]
+    }
+  }
+}
+
+

@@ -1,0 +1,102 @@
+{
+  "name": "Refazendo_agente_Whatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "79d95d87-3617-46c1-992d-86109919de65",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ade31450-e10f-4d4c-96d0-04d759dc1d08",
+      "name": "Webhook",
+      "webhookId": "79d95d87-3617-46c1-992d-86109919de65"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8aca6f25-e133-4db5-906c-e9d0b12b9ce8",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b09f56d0-1254-4e6f-acd9-5e8bd4346be0",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "5c795a51-e0ac-43fa-88f7-93ae1bd975ae",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "385a9c36-526c-4f65-9906-54c946fa12ba",
+  "meta": {
+    "instanceId": "afb501212126bf92dbf7339b1a41e26285c6c58d7404cd306cfb3c7af18ad541"
+  },
+  "id": "ScDINdlELNLWPeGf",
+  "tags": []
+}

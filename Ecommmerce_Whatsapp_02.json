@@ -1,0 +1,99 @@
+{
+  "name": "Atendimento E-commerce com IA (Camila, Paulo ou Samira)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Webhook Entrada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [\n  {\n    json: {\n      menu: \"Com qual agente você prefere falar?\\n1 - Camila (Elegante)\\n2 - Paulo (Técnico)\\n3 - Samira (Apaixonada)\",\n    },\n  },\n];"
+      },
+      "id": "2",
+      "name": "Menu de Boas-vindas",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"mensagem\"]}}",
+              "value2": "1"
+            },
+            {
+              "value1": "={{$json[\"mensagem\"]}}",
+              "value2": "2"
+            },
+            {
+              "value1": "={{$json[\"mensagem\"]}}",
+              "value2": "3"
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Escolha do Agente",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "prompt": "Você é a Camila, uma consultora de perfumes árabes, educada, elegante e prestativa. Fale sempre com um toque refinado e exclusivo, como se estivesse atendendo um cliente VIP.",
+        "temperature": 0.7,
+        "model": "gpt-4"
+      },
+      "id": "4",
+      "name": "ChatGPT - Camila",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [800, 200]
+    },
+    {
+      "parameters": {
+        "prompt": "Você é o Paulo, um especialista técnico em fragrâncias, direto, confiante e objetivo. Ajuda o cliente a entender melhor o produto com clareza e precisão.",
+        "temperature": 0.7,
+        "model": "gpt-4"
+      },
+      "id": "5",
+      "name": "ChatGPT - Paulo",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "prompt": "Você é a Samira, uma entusiasta apaixonada por perfumes, fala com emoção e empolgação. Usa expressões sensoriais e instiga a imaginação do cliente com cheiros e sensações.",
+        "temperature": 0.7,
+        "model": "gpt-4"
+      },
+      "id": "6",
+      "name": "ChatGPT - Samira",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [800, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Entrada": {
+      "main": [[{ "node": "Menu de Boas-vindas", "type": "main", "index": 0 }]]
+    },
+    "Menu de Boas-vindas": {
+      "main": [[{ "node": "Escolha do Agente", "type": "main", "index": 0 }]]
+    },
+    "Escolha do Agente": {
+      "main": [
+        [{ "node": "ChatGPT - Camila", "type": "main", "index": 0 }],
+        [{ "node": "ChatGPT - Paulo", "type": "main", "index": 0 }],
+        [{ "node": "ChatGPT - Samira", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

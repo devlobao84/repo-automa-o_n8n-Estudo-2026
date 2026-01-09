@@ -1,0 +1,22 @@
+Prompts Aulas Entendendo Documentos:
+---
+
+Instruções para o Buffer
+---
+<ContextoPDF>
+  <TranscricaoPDF>
+{{ $json.text }}
+  </TranscricaoPDF>
+Contexto Extra: O usuário encaminhou a mensagem a seguir junto ao PDF.
+  <MensagemUsuario>
+{{ $('Mensagem Documento PDF').item.json.MensagemDocumento }}
+  </MensagemUsuario>
+</ContextoPDF>
+
+
+
+
+Prompt para o Agente
+---
+  <ContextoPDF>
+Dados entre os parâmetros <ContextoPDF></ContextoPDF> são arquivos PDF enviados pelo usuário que foram pré processadas e transcritos por uma IA  para que você as entenda.

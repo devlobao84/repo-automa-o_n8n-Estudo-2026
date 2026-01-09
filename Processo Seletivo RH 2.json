@@ -1,0 +1,378 @@
+{
+  "name": "Processo Seletivo RH 2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtDayOfMonth": 4,
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        -960
+      ],
+      "id": "488624d8-a947-4b09-beb4-5d9de3a3981e",
+      "name": "Dispara data 04/12/25 16:00"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0dc500ec-a4fe-4e72-956a-c9a3968a191b",
+              "leftValue": "={{ $json['Anos Experiência'] }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "fdf5192a-2338-4721-b729-ecce16912daa",
+              "leftValue": "={{ $json['Grau Escolaridade'] }}",
+              "rightValue": "Superior",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -1056
+      ],
+      "id": "6b6b2303-f96c-47a4-bb21-5c56b52917d5",
+      "name": "IF_Candidato Aprovado"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -912
+      ],
+      "id": "5de2a5de-255f-4f52-bfe8-656bf3fbedd3",
+      "name": "Fila Candidato Reprovado"
+    },
+    {
+      "parameters": {
+        "fromEmail": "caroline-luna@hotmail.com",
+        "toEmail": "={{ $json.Email }}",
+        "subject": "Atualização sobre o processo seletivo",
+        "emailFormat": "text",
+        "text": "=Olá {{ $json.Nome.split(' ') [0]}}, tudo bem ?\nAgradeço pela sua participação no nosso processo seletivo. Após análise, infelizmente você não foi selecionado(a) para avançar para a próxima etapa.\n\nFique à vontade para participar de futuras oportunidades. Será um prazer considerar seu perfil novamente.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        944,
+        -976
+      ],
+      "id": "b595c85f-ac04-43b9-92bc-e8be9daf11d1",
+      "name": "Envia email de Reprovado",
+      "webhookId": "8771cc06-6daa-440e-ba94-cc569d137a1b",
+      "credentials": {
+        "smtp": {
+          "id": "H5d7eLc4c6Tqbcyd",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -1200
+      ],
+      "id": "afc05bb0-bc53-438d-88d2-565b15495e59",
+      "name": "Fila Candidato Aprovado"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        -912
+      ],
+      "id": "7dcc23fa-356b-4769-8e12-f7d68e9f92b9",
+      "name": "Aguardar 5seg",
+      "webhookId": "ee90b6e5-33c2-4979-81b6-d465bdcd5465"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1loZ0UUBdry36qDR4tOBP581pJm1PXhXAuKm30WhD9aY",
+          "mode": "list",
+          "cachedResultName": "N8N - 1 Processo Seletivo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1loZ0UUBdry36qDR4tOBP581pJm1PXhXAuKm30WhD9aY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1976007669,
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1loZ0UUBdry36qDR4tOBP581pJm1PXhXAuKm30WhD9aY/edit#gid=1976007669"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        -960
+      ],
+      "id": "789a9524-5552-43bd-ba60-5f0dfb9935cd",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XD1iVyklcTlbDzXk",
+          "name": "Obtem candidatos"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "caroline-luna@hotmail.com",
+        "toEmail": "={{ $json.Email }}",
+        "subject": "Você foi Aprovado",
+        "emailFormat": "text",
+        "text": "=Olá {{ $json.Nome.split(' ') [0]}}, tudo bem ?\nPassando aqui para informar que você foi aprovado para próxima etapa do processo seletivo.\nParabens!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        944,
+        -1264
+      ],
+      "id": "787b8c25-96b1-4382-9881-45b63a431781",
+      "name": "Envia email de aprovação1",
+      "webhookId": "8771cc06-6daa-440e-ba94-cc569d137a1b",
+      "credentials": {
+        "smtp": {
+          "id": "H5d7eLc4c6Tqbcyd",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        -1200
+      ],
+      "id": "50d4a62b-b7a6-4708-aaad-bb3cf4520329",
+      "name": "Aguardar 5s1",
+      "webhookId": "ee90b6e5-33c2-4979-81b6-d465bdcd5465"
+    },
+    {
+      "parameters": {
+        "jsCode": "const aprovados = [];\nconst reprovados = [];\n\nfor (const item of items) {\n  const dados = item.json;\n\n  const aprovado =\n    dados['Anos Experiência'] > 5 &&\n    dados['Grau Escolaridade'] === 'Superior';\n\n  const linhaTexto =\n    `Nome: ${dados.Nome} | ` +\n    `E-mail: ${dados.Email} | ` +\n    `Experiência: ${dados['Anos Experiência']} anos | ` +\n    `Escolaridade: ${dados['Grau Escolaridade']}`;\n\n  if (aprovado) {\n    aprovados.push(linhaTexto);\n  } else {\n    reprovados.push(linhaTexto);\n  }\n}\n\nreturn [\n  {\n    json: {\n      aprovados,\n      reprovados,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -704
+      ],
+      "id": "b78ffc14-8a70-4c0b-93f1-fa0dcc648a5c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "fromEmail": "carolinepiresdeluna@gmail.com",
+        "toEmail": "caroline-luna@hotmail.com",
+        "subject": "Candidatos Aprovados e Reprovados",
+        "emailFormat": "text",
+        "text": "=Olá colaborador X! Segue a relação dos candidatos aprovados e reprovados no ultimo processo seletivo.\n\nCandidatos Aprovados:\n{{ $json.aprovados }}\n\nCandidatos Reprovados:\n{{ $json.reprovados }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -704
+      ],
+      "id": "213469de-33e0-4714-98ee-af52ee677d11",
+      "name": "Envia Lista RH Aprovados e Reprovados",
+      "webhookId": "563b5892-1d73-4494-b1a5-23ba33eb6f90",
+      "credentials": {
+        "smtp": {
+          "id": "H5d7eLc4c6Tqbcyd",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Dispara data 04/12/25 16:00": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_Candidato Aprovado": {
+      "main": [
+        [
+          {
+            "node": "Fila Candidato Aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fila Candidato Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila Candidato Reprovado": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email de Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email de Reprovado": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 5seg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila Candidato Aprovado": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia email de aprovação1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 5seg": {
+      "main": [
+        [
+          {
+            "node": "Fila Candidato Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "IF_Candidato Aprovado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia email de aprovação1": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 5s1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 5s1": {
+      "main": [
+        [
+          {
+            "node": "Fila Candidato Aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Envia Lista RH Aprovados e Reprovados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3910f7b0-7922-4c87-b248-d8717e06b69d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "206772043d1ed92869f85d973dd1bfe5cfdcb657b9026d928ef4f362b9514558"
+  },
+  "id": "V24JBHY9FYF5RXBo",
+  "tags": []
+}

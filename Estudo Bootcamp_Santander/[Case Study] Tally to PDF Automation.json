@@ -1,0 +1,158 @@
+{
+  "name": "[Case Study] Tally to PDF Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "briefing-talling",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "711c3dd8-ec38-419e-bba0-9864c29368eb",
+      "name": "Webhook",
+      "webhookId": "5061616c-61e5-4cda-9192-d4217fe312e8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "1i6Xu34-pXesflu9MQ5An03EXG6yQ8b8smnyzj1hTkTc",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{nome}}",
+              "replaceText": "=$json.body.data.response.fields[1].value"
+            },
+            {
+              "action": "replaceAll"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "bd214022-9037-4004-994f-45aca81afd92",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "goCqIhKMdEU3jkrY",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "82b20768-0b13-4536-ac89-562f4f653423",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rFjMgxWxQ21JAhmJ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "co@emd.art.br",
+        "toEmail": "$('Webhook').first().json.body.data.response.fields[2].value }}",
+        "subject": "Briefing de Projeto Preenchido - TCCX",
+        "html": "=Olá {{ $('Webhook').first().json.body.data.response.fields[1].value }}, segue o Briefing em anexo.",
+        "options": {
+          "attachments": "={{ $('Download file').item.binary }}"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "4e8f32ba-6392-441f-b366-15227f3001e3",
+      "name": "Send email",
+      "webhookId": "f9182ff5-9004-467c-b656-d80452581a4a",
+      "credentials": {
+        "smtp": {
+          "id": "nvklNLr4NtEq4BLP",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cbffb7d9-459e-4e27-9b8f-f6f4cf6d89c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9122f70b4ce55544aa9f422ff48eca08256e8201df0b3cf08f44a720835301ad"
+  },
+  "id": "fGiBGT5eeJEbeYou",
+  "tags": []
+}

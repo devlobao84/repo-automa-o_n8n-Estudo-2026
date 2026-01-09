@@ -1,0 +1,228 @@
+{
+  "name": "Integrando com Supabase_#01",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e1a86535-9592-4f50-9a5e-c06fc104d7a4",
+      "name": "When chat message received",
+      "webhookId": "f53e2ca4-2519-448a-8b7e-45b69316abc2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=Você é um assistente financeiro capaz de gerenciar registros de gastos no Supabase. Sua função é interagir com a tabela gastos, ajudando o usuário a visualizar adicionar e editar suas despesas.\n\nSempre que o usuário solicitar, ative a tool:\n\n1️⃣ Visualizar Gastos (tool_visualizar_gastos)\n\t•\tExiba os registros da tabela com nome, tipo e valor.\n\t•\tSe o usuário quiser filtrar por tipo ou período, pergunte os critérios antes de chamar a tool.\n\n2️⃣ Adicionar Gasto (tool_criar_gasto)\nPara ativar a tool é necessário ter:\n- nome_gasto (nome do gasto);\n- valor_gasto (valor do gasto);\n- tipo_gasto (Você deve categorizar tipo com base na mensagem do usuário, existem apenas 4 tipos de gastos: Supermercado, Diversão, Saúde e Educação)\nConfirme o registro antes de enviá-lo.\n\n3️⃣ Editar Gasto (tool_atualizar_gasto), siga o passo a passo:\n- Pergunte qual registro editar (nome).\n- Para isso ative a tool visualizar gasto para confirmar o nome exato do gasto\n- Confirme com o usuário qual gasto ele irá atualizar\n- Com o nome_gasto do gasto, ative a tool_atualizar_gasto e faça a alteração\n- Após a edição, mostre a atualização feita.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "b7b02589-9aa0-46fa-978b-3a41d3b8c84b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        240
+      ],
+      "id": "a2046440-ecd5-4c65-87ce-13bd60071b31",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Km0OmWnuCfvh1XPv",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        280,
+        240
+      ],
+      "id": "f512164b-4163-4f4e-9400-d4f97b7fe9cd",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "gastos",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        440,
+        240
+      ],
+      "id": "ddc67939-7056-47da-9941-19392a259a03",
+      "name": "tool_visualizar_gastos"
+    },
+    {
+      "parameters": {
+        "tableId": "gastos",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $fromAI('nome_gasto') }}"
+            },
+            {
+              "fieldId": "valor",
+              "fieldValue": "={{ $fromAI('valor_gasto') }}"
+            },
+            {
+              "fieldId": "tipo",
+              "fieldValue": "={{ $fromAI('tipo_gasto') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ],
+      "id": "8f8beec7-19d6-481a-97ab-8268454cabd7",
+      "name": "tool_criar_gasto"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "gastos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "nome",
+              "condition": "eq",
+              "keyValue": "={{ $fromAI('nome_gasto') }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $fromAI('nome_gasto') }}"
+            },
+            {
+              "fieldId": "valor",
+              "fieldValue": "={{ $fromAI('valor_gasto') }}"
+            },
+            {
+              "fieldId": "tipo",
+              "fieldValue": "={{ $fromAI('tipo_gasto') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        760,
+        240
+      ],
+      "id": "262f3603-7383-4ace-bf4a-f5a2028891a2",
+      "name": "tool_atualizar_gasto"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tool_visualizar_gastos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tool_criar_gasto": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tool_atualizar_gasto": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6ac05b0a-6b57-4c67-89c7-d67e746c492b",
+  "meta": {
+    "instanceId": "2ab5464e2a5c5f18764c7948e1e43d2091cef8a5c3d045d9795b250274334ed5"
+  },
+  "id": "HjKDgN8zdEt2X5tg",
+  "tags": []
+}
