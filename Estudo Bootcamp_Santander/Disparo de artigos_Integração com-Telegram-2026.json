@@ -1,0 +1,395 @@
+{
+  "name": "Disparo de Artigos-Integração com Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 9
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        -32
+      ],
+      "id": "b2708355-ce03-4416-b08e-3cc767409098",
+      "name": "Seg a Sex as 9am"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y",
+          "mode": "list",
+          "cachedResultName": "Seleção de Artigos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Primeira seleção",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "STATUS",
+              "lookupValue": "Não foi enviado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        112,
+        -32
+      ],
+      "id": "e3954c0a-a0ac-4985-a1ee-c8dcc7244d2a",
+      "name": "Disparar artigos não enviados",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EV9de6Ri9QB0YzB4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -32
+      ],
+      "id": "1a95c31b-7618-4736-8a22-4504465229f3",
+      "name": "Limita em apenas 1 artigo"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ok }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "03d9e826-232f-4e3a-81e4-f73933ed6ba8"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        384
+      ],
+      "id": "c928b4a7-62a7-4a50-b885-5c229cb93625",
+      "name": "Confirma se foi enviado com sucesso"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y",
+          "mode": "list",
+          "cachedResultName": "Seleção de Artigos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Primeira seleção",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t7Xr-BPgNk48uPP2nXjPLhyKu2LFa3d8aMLksMJPC8Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Limita em apenas 1 artigo').item.json.row_number }}",
+            "STATUS": "Enviado com sucesso"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Título",
+              "displayName": "Título",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Descrição",
+              "displayName": "Descrição",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        304
+      ],
+      "id": "5315ce1c-aff5-4cc2-88c4-4a270139e89c",
+      "name": "Atualiza Status enviado  na planilha",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EV9de6Ri9QB0YzB4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://teste.uzapi.com.br:3333/sendtext",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "sessionkey",
+              "value": "lobao"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "lobao"
+            },
+            {
+              "name": "number",
+              "value": "5511948959960"
+            },
+            {
+              "name": "text",
+              "value": "=O artigo *{{ $('Limita em apenas 1 artigo').item.json['Título'] }}* foi *enviado* com sucesso para o canal do Telegram."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        336,
+        480
+      ],
+      "id": "3aa248a4-eca3-434d-8385-abe42f765524",
+      "name": "Avisa no Whats que o artigo foi enviado"
+    },
+    {
+      "parameters": {
+        "content": " ## Etapa 01 - Disparo de artigos",
+        "height": 288,
+        "width": 992,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -96
+      ],
+      "id": "9ff2d8f8-b4b3-4736-a587-6f88231b0e24",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Etapa 02 - Filtro de confirmações de disparo",
+        "height": 448,
+        "width": 704,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        208
+      ],
+      "id": "efe50a2f-6d10-4ef5-adef-fe0edb8fa580",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "@olobotech",
+        "text": "=**{{ $json['Título'] }}**\n\n_{{ $json['Descrição'] }}_\n\n\n{{ $json.URL }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        -32
+      ],
+      "id": "3a97e662-630b-4da8-9636-67943fd6599c",
+      "name": "Envio de artigos direto pro canal do Telegram",
+      "webhookId": "948c7c79-d8ea-4cc1-9381-56ab3c03b288",
+      "credentials": {
+        "telegramApi": {
+          "id": "4ZQwaU5EbblcW37i",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Seg a Sex as 9am": {
+      "main": [
+        [
+          {
+            "node": "Disparar artigos não enviados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparar artigos não enviados": {
+      "main": [
+        [
+          {
+            "node": "Limita em apenas 1 artigo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limita em apenas 1 artigo": {
+      "main": [
+        [
+          {
+            "node": "Envio de artigos direto pro canal do Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirma se foi enviado com sucesso": {
+      "main": [
+        [
+          {
+            "node": "Atualiza Status enviado  na planilha",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Avisa no Whats que o artigo foi enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio de artigos direto pro canal do Telegram": {
+      "main": [
+        [
+          {
+            "node": "Confirma se foi enviado com sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "f7502431-1796-479d-a09f-6dbf55ca76d2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3eece19692dc4f4e84b9c61183d24173e086c16af661551879ae9ccbaf0e8cdb"
+  },
+  "id": "LDCkY9KxLFMHfU9A3K7a-",
+  "tags": []
+}
