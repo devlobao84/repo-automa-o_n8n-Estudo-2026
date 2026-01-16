@@ -1,0 +1,153 @@
+{
+  "name": "Fluxo de cobrança e envio de nota fiscal",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ee33785b-5b1d-4e39-a816-34d6b2d69fc9",
+              "name": "asaas-api-url",
+              "value": "https://api-sandbox.asaas.com/v3",
+              "type": "string"
+            },
+            {
+              "id": "1fd529eb-b7ce-4cee-bd7e-32bd86f45297",
+              "name": "token",
+              "value": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjgyZmEwODU3LTI5N2YtNDEzYi1iN2I5LTM5NWRiNjlhNjNkNjo6JGFhY2hfY2E3MTllOWYtZDUzNy00MmFlLTgzZDYtMjhmZGJmYTBmOTEy",
+              "type": "string"
+            },
+            {
+              "id": "ecb3912f-3ca6-4158-ba0b-fa074011b915",
+              "name": "dias-vencimento ",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        0
+      ],
+      "id": "e3b4fd65-f0b7-45e2-b981-7313d0f83b81",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 4,
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "1b1ce8b3-8fe3-44dd-87c7-0db2f6947b65",
+      "name": "A cada 4 dias as 9am"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['asaas-api-url'] }}/customers",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "={{ $json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        320,
+        0
+      ],
+      "id": "7e61d432-b03a-4aad-b312-a4fafcc8ff47",
+      "name": "Obter 100 clientes"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "f0e50965-d6bc-4495-bdf2-bd08687eebbe",
+      "name": "Split Out"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "A cada 4 dias as 9am": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Obter 100 clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter 100 clientes": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "62ad7207-0640-44b2-aaec-8207a48d4d41",
+  "meta": {
+    "instanceId": "3eece19692dc4f4e84b9c61183d24173e086c16af661551879ae9ccbaf0e8cdb"
+  },
+  "id": "vgCP64RkP2sTpPKqQf8H4",
+  "tags": []
+}
